@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Para vos ♡</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     AUDIO DEL DESCUBRIMIENTO
+     Coloca los archivos en /audio/
+     ============================================================ -->
+<audio id="audio-soplido" preload="auto">
+  <source src="audio/soplido.mp3" type="audio/mpeg">
+</audio>
+<audio id="audio-cumpleanos" preload="auto" loop>
+  <source src="audio/cumpleanos.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ============================================================
+     FONDO DE PÉTALOS FLOTANDO (decorativo, se llena por JS)
+     ============================================================ -->
+<div id="petal-layer" aria-hidden="true"></div>
+
+<!-- ============================================================
+     0.5. DESCUBRIMIENTO DEL REGALO
+     ============================================================ -->
+<section id="birthday-discovery" aria-label="Descubrir el regalo de cumpleaños">
+  <div class="discovery-stage">
+    <button id="magic-flame" class="magic-flame" type="button" aria-label="Encender la llama">
+      <span class="flame-glow" aria-hidden="true"></span>
+      <img class="flame" src="images/flama.png" alt="" aria-hidden="true">
+    </button>
+
+    <div id="birthday-reveal" class="birthday-reveal" hidden>
+      <div class="birthday-table" aria-hidden="true"></div>
+      <!-- Espacio reservado para la torta. Coloca tu PNG en images/torta.png -->
+      <div class="birthday-cake cake-slot" aria-label="Espacio reservado para la torta" role="img">
+        <img src="images/torta.png" alt="Torta de cumpleaños" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+        <span class="cake-placeholder" hidden>Coloca aquí tu PNG de la torta</span>
+      </div>
+
+      <!-- Florero: reemplaza el antiguo cuadro de la izquierda. -->
+      <div class="birthday-vase" aria-label="Florero con las flores del regalo">
+        <img src="images/florero.png" alt="Flores del regalo" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+        <span class="vase-placeholder" hidden>Coloca aquí tu PNG del florero</span>
+      </div>
+
+      <p class="reveal-title">¡Feliz Cumpleaños!</p>
+      <p class="reveal-instruction">Presiona sobre el regalo, bobolona</p>
+      <button id="birthday-gift" class="birthday-gift" type="button" aria-label="Abrir el regalo">
+        <span class="gift-bow" aria-hidden="true"></span><span class="gift-lid" aria-hidden="true"></span><span class="gift-box" aria-hidden="true"></span><span class="gift-sparkle" aria-hidden="true">✦</span>
+      </button>
+      <p class="gift-hint">Abrime ♡</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     0. PRESENTACIÓN DE CUMPLEAÑOS
+     Aparece antes del sobre y del contenido principal.
+     ============================================================ -->
+<section id="birthday-screen" aria-label="Mensaje de cumpleaños" hidden>
+  <div class="birthday-stage">
+    <div class="birthday-card">
+      <div class="birthday-tape" aria-hidden="true">♡</div>
+      <div class="birthday-deco birthday-deco-left" aria-hidden="true">✿</div>
+      <div class="birthday-deco birthday-deco-right" aria-hidden="true">❀</div>
+
+      <p class="birthday-greeting" id="birthday-greeting">Feliz Cumpleaños,<br><strong>Geraldine!!</strong></p>
+      <p class="birthday-message" id="birthday-message">Estás bien mensa, pero te hice este presente.</p>
+      <p class="birthday-question" id="birthday-question">¿Quieres verlo?</p>
+
+      <div class="birthday-meme" id="birthday-meme" hidden>
+        <div class="birthday-meme-placeholder" id="birthday-meme-placeholder">
+          <span>Tu meme aquí</span>
+          <small>Coloca tu imagen en <code>images/meme1.jpg</code></small>
+        </div>
+        <img id="birthday-meme-image" alt="Meme" hidden>
+      </div>
+
+      <div class="birthday-actions">
+        <button id="birthday-yes" type="button">Sí</button>
+        <button id="birthday-no" type="button">No</button>
+      </div>
+
+      <p class="birthday-response" id="birthday-response" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     1. ANIMACIÓN DE ENTRADA
+     Para editar el texto de esta pantalla, buscá el bloque
+     "PANTALLA DE ENTRADA — TEXTOS" más abajo.
+     ============================================================ -->
+<section id="intro-screen" aria-label="Animación de apertura del regalo">
+  <div class="intro-stage">
+
+    <!-- Sobre -->
+    <div class="envelope" id="envelope">
+      <div class="envelope-body"></div>
+      <div class="note" id="intro-note">
+        <!-- PANTALLA DE ENTRADA — TEXTOS -->
+        <p>Lo hice para ti, así que aprecialo</p>
+      </div>
+      <div class="envelope-flap">
+        <span class="envelope-seal">✿</span>
+      </div>
+    </div>
+
+    <!-- Flores que aparecen alrededor del sobre -->
+    <div class="intro-flowers" aria-hidden="true">
+      <span class="mini-flower f1">✿</span>
+      <span class="mini-flower f2">❀</span>
+      <span class="mini-flower f3">✿</span>
+      <span class="mini-flower f4">❀</span>
+      <span class="mini-flower f5">✿</span>
+    </div>
+
+    <p class="intro-subtext" id="intro-subtext">Deja el overwatch, ya</p>
+
+    <button id="skip-intro" type="button">saltar ↦</button>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTENIDO PRINCIPAL (oculto hasta que termina la intro)
+     ============================================================ -->
+<main id="main-content" hidden>
+
+  <!-- ============================================================
+       2. PÁGINA PRINCIPAL
+       ============================================================ -->
+  <section id="page-home" class="page active" data-page="home">
+    <div class="washi washi-top-left"></div>
+    <div class="washi washi-top-right"></div>
+
+    <div class="home-card scrap-paper">
+      <p class="tag-distance">Perú <span class="arrow">→</span> Vamo Colombia</p>
+
+      <h1 class="home-title">Para ti<span class="heart">Cucurella</span></h1>
+      <p class="home-subtitle">Elige lo que gustes, igual solo hay 2 opciones</p>
+
+      <div class="home-options">
+
+        <button class="option-card" data-goto="bouquet" type="button">
+          <span class="option-icon" aria-hidden="true">
+            <!-- pequeño sobre/ramo -->
+            <svg viewBox="0 0 100 100" width="64" height="64">
+              <ellipse cx="50" cy="70" rx="22" ry="14" fill="#e8b93f"/>
+              <circle cx="38" cy="42" r="12" fill="#fff6df" stroke="#e8b93f" stroke-width="2"/>
+              <circle cx="55" cy="34" r="13" fill="#f6d84a" stroke="#c99f1f" stroke-width="2"/>
+              <circle cx="66" cy="48" r="10" fill="#fff6df" stroke="#e8b93f" stroke-width="2"/>
+            </svg>
+          </span>
+          <span class="option-title">Un ramo para ti</span>
+          <span class="option-subtext">Porque las flores también pueden viajar de otra manera.</span>
+        </button>
+
+        <button class="option-card" data-goto="memories" type="button">
+          <span class="option-icon" aria-hidden="true">
+            <!-- lupa -->
+            <svg viewBox="0 0 100 100" width="64" height="64">
+              <circle cx="42" cy="42" r="24" fill="#fff9ea" stroke="#8a6a3b" stroke-width="5"/>
+              <line x1="60" y1="60" x2="80" y2="80" stroke="#8a6a3b" stroke-width="7" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="option-title">Buscar recuerdos</span>
+          <span class="option-subtext">Hay algunas cosas que encontré por ahí</span>
+        </button>
+
+      </div>
+
+      <!-- pequeño detalle escondido: gatito -->
+      <button class="hidden-cat" id="hidden-cat-home" type="button" aria-label="¿un gatito?">
+        <svg viewBox="0 0 100 70" width="70" height="50">
+          <ellipse cx="50" cy="45" rx="30" ry="20" fill="#fdf6e3" stroke="#c9a86a" stroke-width="2"/>
+          <polygon points="28,25 35,5 42,27" fill="#fdf6e3" stroke="#c9a86a" stroke-width="2"/>
+          <polygon points="58,27 66,5 73,25" fill="#fdf6e3" stroke="#c9a86a" stroke-width="2"/>
+          <circle cx="40" cy="42" r="2.5" fill="#5b4a2f"/>
+          <circle cx="60" cy="42" r="2.5" fill="#5b4a2f"/>
+          <path d="M46 50 Q50 54 54 50" stroke="#5b4a2f" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. RAMO DE FLORES INTERACTIVO
+       ============================================================ -->
+  <section id="page-bouquet" class="page" data-page="bouquet">
+    <button class="back-btn" data-goto="home" type="button">↤ volver</button>
+
+    <div class="bouquet-stage">
+      <!-- El ramo se construye dinámicamente por JS dentro de este contenedor -->
+      <div class="bouquet-container" id="bouquet-container">
+        <svg id="bouquet-svg" viewBox="0 0 340 340" aria-label="Un ramo de flores creciendo">
+          <!-- tallos, envoltorio, hojas y flores se agregan por JS -->
+        </svg>
+      </div>
+
+      <div class="bouquet-note" id="bouquet-note" hidden>
+        <p>No puedo entregarte flores en persona,<br>así que tuve que hacer que crecieran acá.</p>
+      </div>
+
+      <!-- Estructura preparada para significados de cada flor.
+           flowerMeanings en app.js define el texto de cada una. -->
+      <div class="flower-meaning-popup" id="flower-meaning-popup" hidden>
+        <p id="flower-meaning-text"></p>
+        <button type="button" id="close-meaning">cerrar</button>
+      </div>
+    </div>
+
+    <button class="continue-btn" id="bouquet-continue" data-goto="memories" type="button" hidden>
+      ver los recuerdos ↦
+    </button>
+  </section>
+
+  <!-- ============================================================
+       4. SECCIÓN DE RECUERDOS
+       ============================================================ -->
+  <section id="page-memories" class="page" data-page="memories">
+    <button class="back-btn" data-goto="home" type="button">↤ volver</button>
+
+    <div class="memories-header">
+      <h2>Nuestros pequeños recuerdos</h2>
+      <p class="memories-hint">
+        <span class="hint-desktop">Movete por la mesa con la lupa y haz clic en lo que te llame la atención.</span>
+        <span class="hint-mobile">Toca cada recuerdo para abrirlo.</span>
+      </p>
+    </div>
+
+    <!-- Lupa que sigue el cursor (solo escritorio) -->
+    <div class="magnifier" id="magnifier" aria-hidden="true">
+      <svg viewBox="0 0 100 100" width="90" height="90">
+        <circle cx="40" cy="40" r="26" fill="rgba(255,249,234,0.35)" stroke="#8a6a3b" stroke-width="5"/>
+        <line x1="60" y1="60" x2="86" y2="86" stroke="#8a6a3b" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="memories-desk" id="memories-desk">
+
+      <!-- ================================================================
+           RECUERDO 01
+           Para poner tu imagen real: reemplazá el contenido de
+           .memory-photo-placeholder por:
+           <img src="assets/recuerdos/recuerdo-01.jpg" alt="descripción breve">
+           ================================================================ -->
+      <article class="memory-card mc-1" data-memory="1" tabindex="0" role="button" aria-label="Abrir recuerdo 1">
+        <div class="tape tape-a"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-01.jpg" alt="Recuerdo 1" loading="lazy">
+        </div>
+        <p class="memory-caption">La primera captura! Y te gané</p>
+      </article>
+
+      <article class="memory-card mc-2" data-memory="2" tabindex="0" role="button" aria-label="Abrir recuerdo 2">
+        <div class="tape tape-b"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-02.jpg" alt="Recuerdo 2" loading="lazy">
+        </div>
+        <p class="memory-caption">Lo que costó este acertijo</p>
+      </article>
+
+      <article class="memory-card mc-3" data-memory="3" tabindex="0" role="button" aria-label="Abrir recuerdo 3">
+        <div class="tape tape-a"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-03.jpg" alt="Recuerdo 3" loading="lazy">
+        </div>
+        <p class="memory-caption">A mimir Zzz</p>
+      </article>
+
+      <article class="memory-card mc-4" data-memory="4" tabindex="0" role="button" aria-label="Abrir recuerdo 4">
+        <div class="tape tape-b"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-04.jpg" alt="Recuerdo 4" loading="lazy">
+        </div>
+        <p class="memory-caption">Estas wins de Dj fueron brutales</p>
+      </article>
+
+      <article class="memory-card mc-5" data-memory="5" tabindex="0" role="button" aria-label="Abrir recuerdo 5">
+        <div class="tape tape-a"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-05.jpg" alt="Recuerdo 5" loading="lazy">
+        </div>
+        <p class="memory-caption">El hijo gato kuuul</p>
+      </article>
+
+      <article class="memory-card mc-6" data-memory="6" tabindex="0" role="button" aria-label="Abrir recuerdo 6">
+        <div class="tape tape-b"></div>
+        <div class="memory-photo-placeholder">
+          <img src="assets/recuerdos/recuerdo-06.jpg" alt="Recuerdo 6" loading="lazy">
+        </div>
+        <p class="memory-caption">El homúnculo Naruto64 (Nombre en proceso de cambio)</p>
+      </article>
+
+      <!-- pequeños detalles decorativos sobre la mesa -->
+      <div class="desk-deco deco-flower-1" aria-hidden="true">✿</div>
+      <div class="desk-deco deco-flower-2" aria-hidden="true">❀</div>
+
+      <!-- detalle escondido: referencia a Roblox -->
+      <button class="hidden-note" id="hidden-roblox" type="button" aria-label="una notita escondida">
+        <span class="hidden-note-fold"></span>
+      </button>
+
+    </div>
+
+    <button class="continue-btn" id="memories-continue" data-goto="closing" type="button">
+      ya vi todo ↦
+    </button>
+  </section>
+
+  <!-- El recuerdo expandido (modal tipo foto grande) -->
+  <div class="memory-modal" id="memory-modal" hidden>
+    <div class="memory-modal-inner">
+      <button class="modal-close" id="modal-close" type="button" aria-label="cerrar">✕</button>
+      <div class="modal-photo-placeholder" id="modal-photo">
+        <!-- reemplazar con <img src="assets/recuerdos/recuerdo-0X.jpg"> según el recuerdo abierto -->
+      </div>
+      <div class="modal-text">
+        <p class="modal-title" id="modal-title">Recuerdo #01</p>
+        <p class="modal-date" id="modal-date"></p>
+        <p class="modal-desc" id="modal-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       5. CIERRE / MENSAJE FINAL
+       ============================================================ -->
+  <section id="page-closing" class="page" data-page="closing">
+    <div class="closing-envelope-deco" aria-hidden="true">✿</div>
+
+    <div class="closing-card scrap-paper">
+      <p class="closing-line">Okey, la parte final debe ser cursi, pero como me cuesta contigo, Dios.</p>
+      <p class="closing-line">Mira, gracias por haber estado ahí para escucharme, y por dejarme estar ahí para ti también. Aprecio mucho esos momentos (aunque una vez me fallaste, no olvido >:n)</p>
+      <p class="closing-line">Y aunque estemos a tantos kilómetros de distancia, me las ingenié para hacerte un regalo, viste. Soy un crack. </p>
+      <p class="closing-signature">Un abrazo a la distancia, Cucurella. Que la pases lindo en tu cumple. Felices 25.</p>
+
+      <button class="back-btn inline-back" data-goto="home" type="button">volver al principio</button>
+    </div>
+
+    <div class="closing-flower" aria-hidden="true">✿</div>
+  </section>
+
+</main>
+
+<script src="js/app.js"></script>
+</body>
+</html>
